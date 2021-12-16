@@ -8,9 +8,11 @@ greater than 2021.2 seem to not work. The bug presents at build time as:
 ld: file not found: @rpath/for_mac_ftn_alloc.dylib for architecture x86_64
 ```
 
-Investigations into the Fortran libraries in oneAPI show that this new library,
-`for_mac_ftn_alloc.dylib`, is now part of oneAPI as of 2021.3. You can see this
-with `otool`:
+Investigations into the Fortran libraries in oneAPI show that this new
+library, `for_mac_ftn_alloc.dylib`, is wanted by oneAPI as of 2021.3
+in `libifcore.dylib` and in `libifcoremt.dylib`. You can see this with
+`otool`:
+
 ```console
 ❯ otool -L libifcore.dylib | grep for_mac
 	@rpath/for_mac_ftn_alloc.dylib (compatibility version 1.0.0, current version 1.11.0, weak)
@@ -46,6 +48,10 @@ Load command 11
    time stamp 2 Wed Dec 31 19:00:02 1969
 ...
 ```
+
+The problem is, there is no `for_mac_ftn_alloc.dylib` in oneAPI or
+anywhere else on my Mac. (It does not appear to be in gcc, Open MPI,
+Xcode, etc.)
 
 But this does present us with a possible hack/workaround. The
 `for_mac_ftn_alloc.dylib` library is `LC_LOAD_WEAK_DYLIB` which, from my reading
